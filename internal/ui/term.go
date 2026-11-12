@@ -21,7 +21,7 @@ type Terminal struct {
 	TTY   bool // la salida es una terminal (si no, no se animan barras ni spinners)
 	Color bool
 
-	ctx   context.Context // si se cancela (Ctrl+C), las preguntas dejan de esperar
+	ctx     context.Context // si se cancela (Ctrl+C), las preguntas dejan de esperar
 	lines   chan readResult // resultado de la lectura de stdin en curso
 	pending bool            // hay una lectura en curso
 }
