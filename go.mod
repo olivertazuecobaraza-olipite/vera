@@ -3,7 +3,7 @@ module github.com/olivertazuecobaraza-olipite/vera
 go 1.25
 
 require (
-	github.com/klauspost/compress v1.20.2
+	github.com/klauspost/compress v1.20.3
 	github.com/spf13/cobra v1.10.2
 )
 
