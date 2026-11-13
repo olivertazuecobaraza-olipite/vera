@@ -1,7 +1,8 @@
 # Arquitectura de **vera**
 
-> Documento adaptado al código actual del proyecto (12-nov-2026). **No está implementado todavía.**
-> Todas las decisiones están cerradas (✅); resumen en la sección 12.
+> **Implementado** (13-nov-2026). Todas las decisiones están cerradas (✅); resumen en la sección 12.
+> Los pequeños cambios respecto a este diseño que surgieron al implementarlo están en la sección 13.
+> La sección 0 describe el código **anterior** a la migración (se conserva como referencia).
 
 Herramienta de terminal en Go que usa Ollama (local) para proponer comandos a partir de una descripción en lenguaje natural. Funciona en macOS, Linux y Windows.
 
@@ -629,3 +630,36 @@ Se añadirían como `./build.sh test`, `./build.sh cover`, `./build.sh integrati
 | 8 | Control de versiones | ✅ `git init` local + commit antes del paso 1 |
 
 Dependencias nuevas: solo `github.com/spf13/cobra` (y `spf13/pflag`, que trae). Se mantiene `klauspost/compress` para el `.tar.zst` de Linux.
+
+---
+
+## 13. Implementación: cambios respecto al diseño
+
+Lo implementado sigue este documento. Estos son los ajustes que surgieron al escribir el código:
+
+| Diseño | Implementado | Por qué |
+|---|---|---|
+| `setup.Manager` como interfaz en `setup/manager.go` (§5) | `setup.Manager` es un **struct**; la interfaz la declara quien la usa (`cli.Manager`) | *Accept interfaces, return structs* (§11.4). `cmd/vera/main.go` comprueba en compilación que el struct real y el fake la cumplen. |
+| `Install(ctx, p) error` | `Install(ctx, p) (string, error)`: devuelve dónde quedó instalado | Para el mensaje «✓ Ollama instalado en …». |
+| `EnsureRunning` arranca si hace falta | Además se exponen `Running` y `Start` por separado | La CLI necesita escribir «Arrancando Ollama…» *antes* de arrancarlo, y la capa de servicio no escribe en la terminal. |
+| `AutostartState()` / `SetAutostart(on)` | Reciben `ctx` | Ejecutan `systemctl`; así se pueden cancelar. |
+| `BuildPrompt(info, query)` | `BuildPrompt(info)` (prompt de sistema); la petición va aparte como mensaje del usuario | El golden file no depende de la petición. |
+| `Suggestion.Alternatives` | No existe | Decisión 3 (menos texto = más rápido). |
+| — | `ui.Terminal` con preguntas cancelables | Con `signal.NotifyContext`, una pregunta `[s/N]` bloqueada en la lectura no se enteraría del Ctrl+C. La lectura va en una goroutine y la pregunta deja de esperar al cancelarse el contexto. |
+| — | Errores de Cobra traducidos | «unknown flag» se convierte en «Opción desconocida… escríbelo después de `--`». |
+| Tests de `ui` «lo que salga» | `ui` al 83 % | Barra, preguntas, spinner y portapapeles tienen lógica que merece test. |
+
+### Fallos que encontraron los tests durante la migración
+
+- **`IsDangerous` no detectaba `rm -rf`** (sí `rm -r`): el patrón exigía un límite de palabra justo después de la `r`. Lo cazó la tabla de §11.5.
+- **Variable tapada en `runSuggest`**: tras descargar un modelo que faltaba, el reintento guardaba su resultado en un `err` interno (`:=`) y vera seguía diciendo «no tienes el modelo». Lo cazó `TestModeloQueFaltaAceptar`.
+- **La explicación salía en inglés** con peticiones en español: lo detectó el test de integración y se reforzó la regla en la plantilla del prompt.
+
+### Cómo se verificó
+
+- `./build.sh test` en macOS y, compilados para Linux, en un contenedor Ubuntu (incluye los tests solo-Linux: instalación en `~/.local`, servicio de usuario de systemd).
+- `./build.sh integration` contra Ollama real (`qwen3.5:9b-mlx`).
+- Prueba manual con el binario nuevo en macOS (petición, peligro, copiar, ejecutar, enrutado, `vera ollama`, `vera config`, Ollama cerrado, Ctrl+C a mitad de descarga y reanudación) y en un Ubuntu limpio (sin Ollama → instalar desde una petición normal → responder; Ollama cerrado → arranque automático).
+- **Sin probar en Windows** (solo compila y pasa `go vet`).
+
+Cobertura al terminar: `suggest` 98 %, `sysinfo` 92 %, `llm/ollama` 92 %, `config` 84 %, `ui` 83 %, `cli` 80 %, `setup` 79 %.

@@ -7,12 +7,17 @@ El comando se puede usar como `vera` o como `ia`: son lo mismo.
 ```
 $ vera qué proceso usa el puerto 3000
 ❯ lsof -i :3000
-¿Ejecutar? [s/N] s
+  Muestra qué procesos están utilizando el puerto 3000.
+¿Ejecutar? [s/N/c=copiar] s
 ...
 ✓ terminado
 ```
 
-Funciona en **macOS, Linux y Windows**. Detecta tu sistema y tu shell (zsh/bash, PowerShell o cmd) y pide comandos adecuados para ella.
+- **`s`** lo ejecuta, **Enter** o **`n`** no hace nada y **`c`** lo copia al portapapeles (si el sistema tiene cómo: `pbcopy`, `clip.exe`, `wl-copy`, `xclip` o `xsel`).
+- Si el comando es **peligroso** (borra carpetas, formatea discos, ejecuta un script descargado…), sale en rojo con el motivo. vera lo comprueba por su cuenta, no se fía solo del modelo.
+- Si tu petición empieza por `ollama` o `config` y es una sola palabra, escribe `--` delante para que no se confunda con los subcomandos: `vera -- config`.
+
+Funciona en **macOS, Linux y Windows**. Detecta tu sistema, tu distribución, tu shell (zsh/bash, PowerShell o cmd) y tu gestor de paquetes (apt, pacman, dnf, brew, winget…) y pide comandos adecuados para ellos.
 
 ## Requisitos
 
@@ -86,12 +91,28 @@ Los ajustes se guardan en `config.json` dentro de la carpeta de configuración d
 | `VERA_SHELL` | Shell con la que ejecutar. En Windows, `cmd` para usar cmd.exe | `$SHELL` / PowerShell |
 | `NO_COLOR` | Desactiva los colores | — |
 
-## Compilar
+## Desarrollo
 
-Hace falta [Go](https://go.dev) 1.22+:
+Hace falta [Go](https://go.dev) 1.22+. La arquitectura está explicada en [ARQUITECTURA.md](ARQUITECTURA.md).
+
 ```
-./build.sh                 # genera todos los binarios en dist/
-go build -o vera .         # solo para tu sistema (en Windows: go build -o vera.exe .)
+./build.sh                  # genera todos los binarios en dist/
+./build.sh test             # tests rápidos (sin red ni Ollama)
+./build.sh cover            # cobertura (informe en cover.html)
+./build.sh integration      # también los tests con Ollama de verdad (VERA_TEST_MODEL elige el modelo)
+./build.sh golden           # regenera los golden files si cambias el prompt a propósito
+go build -o vera ./cmd/vera  # solo para tu sistema
+```
+
+```
+cmd/vera/          punto de entrada: monta las piezas
+internal/cli/      argumentos (Cobra), preguntas al usuario y flujos
+internal/suggest/  prompt, salida JSON del modelo y detección de comandos peligrosos
+internal/llm/      cliente de Ollama (/api/chat)
+internal/setup/    instalar y arrancar Ollama, descargar y borrar modelos
+internal/config/   config.json y variables de entorno
+internal/sysinfo/  sistema, distribución, shell y gestor de paquetes
+internal/ui/       colores, preguntas, barra de progreso, spinner y portapapeles
 ```
 
 ## Aviso
