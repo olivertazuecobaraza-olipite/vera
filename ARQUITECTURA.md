@@ -663,3 +663,22 @@ Lo implementado sigue este documento. Estos son los ajustes que surgieron al esc
 - **Sin probar en Windows** (solo compila y pasa `go vet`).
 
 Cobertura al terminar: `suggest` 98 %, `sysinfo` 92 %, `llm/ollama` 92 %, `config` 84 %, `ui` 83 %, `cli` 80 %, `setup` 79 %.
+
+---
+
+## 14. Flujo de trabajo, CI/CD y seguridad
+
+```
+feat/…  ──PR (squash, título convencional)──▶  develop  ──PR (merge commit)──▶  main  ──▶  release vX.Y.Z
+```
+
+| Pieza | Dónde | Qué hace |
+|---|---|---|
+| CI | `.github/workflows/ci.yml` | `lint` (gofmt, `go mod tidy`, `go vet` ×3 SO, golangci-lint, actionlint, zizmor), `test` en Linux/macOS/Windows, `build` de los 6 binarios, `govulncheck`; en PR a main, además `e2e` (Ubuntu limpio: `vera ollama` instala Ollama y un modelo, tests de integración y una petición real) |
+| Reglas de PR | `.github/workflows/pr.yml` | `pr-title` (Conventional Commits, PR a develop), `pr-origen` (a main solo desde develop), `release-preview` (comenta la versión que se publicará) |
+| Release | `.github/workflows/release.yml` + `.goreleaser.yaml` | al fusionar en main: versión con `.github/scripts/next-version.sh` (svu), etiqueta, GoReleaser (binarios, `checksums.txt`, changelog) y atestaciones de procedencia |
+| Seguridad | `codeql.yml`, `scorecard.yml`, `dependency-review.yml`, `dependabot.yml` | análisis estático, puntuación OpenSSF, revisión de dependencias en PR, actualizaciones semanales contra develop |
+
+Reglas de los workflows: permisos mínimos por job (`permissions: {}` arriba), acciones fijadas por SHA, `persist-credentials: false`, sin caché en los jobs que compilan lo que se publica, y Go estable más reciente (no el mínimo de `go.mod`) para que los binarios lleven la biblioteca estándar parcheada.
+
+Protecciones en GitHub (rulesets): sin push directo ni force-push a `develop`/`main`, todos los checks obligatorios (nadie puede saltárselos), fusión solo por PR y aceptada por el propietario (las PR externas necesitan su aprobación como code owner), etiquetas `v*` solo creadas por el workflow de release. Además: secret scanning con push protection, Dependabot, reporte privado de vulnerabilidades y aprobación manual del CI para PR de colaboradores externos.

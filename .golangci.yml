@@ -1,0 +1,34 @@
+version: "2"
+
+linters:
+  # Los de por defecto (errcheck, govet, ineffassign, staticcheck, unused) y algunos más.
+  enable:
+    - bodyclose
+    - errorlint
+    - nilerr
+    - unconvert
+  settings:
+    staticcheck:
+      # ST1005: los mensajes de error empiezan por «Ollama» (nombre propio) y se muestran tal cual al usuario.
+      checks: ["all", "-ST1000", "-ST1003", "-ST1005", "-ST1016", "-ST1020", "-ST1021", "-ST1022"]
+    errcheck:
+      # Escribir en la terminal y cerrar/borrar temporales al terminar: si fallan, no hay nada útil que hacer.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+        - (io.Closer).Close
+        - os.Remove
+        - os.RemoveAll
+        - os.MkdirAll
+  exclusions:
+    presets:
+      - std-error-handling
+    rules:
+      # En los tests se ignoran errores de preparación (escribir archivos de prueba, etc.).
+      - path: _test\.go
+        linters: [errcheck]
+
+formatters:
+  enable:
+    - gofmt

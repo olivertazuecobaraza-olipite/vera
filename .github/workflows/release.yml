@@ -1,0 +1,71 @@
+# Publica una versión al fusionar develop en main: calcula la versión, crea la etiqueta,
+# compila con GoReleaser y firma la procedencia de los binarios (atestaciones de GitHub).
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false # nunca cortar una publicación a medias
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write # crear la etiqueta y la release
+      id-token: write # firmar las atestaciones
+      attestations: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: stable
+          check-latest: true
+          cache: false # sin caché en la publicación (evita envenenamiento de caché)
+
+      - name: Calcular la versión
+        id: version
+        run: |
+          if tag=$(git describe --tags --exact-match --match 'v*' HEAD 2>/dev/null); then
+            echo "Este commit ya está publicado como $tag"; echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          version=$(.github/scripts/next-version.sh)
+          echo "Versión: $version"
+          echo "tag=$version" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Crear la etiqueta
+        if: steps.version.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$TAG" -f sha="$GITHUB_SHA" > /dev/null
+          git tag "$TAG" "$GITHUB_SHA"
+
+      - name: Publicar con GoReleaser
+        if: steps.version.outputs.skip == 'false'
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+        with:
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Atestaciones de procedencia
+        if: steps.version.outputs.skip == 'false'
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            dist/*.tar.gz
+            dist/*.zip
+            dist/checksums.txt
