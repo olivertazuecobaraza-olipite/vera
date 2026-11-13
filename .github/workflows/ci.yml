@@ -121,7 +121,7 @@ jobs:
           go-version: stable
           check-latest: true
       - name: Vulnerabilidades conocidas en dependencias y biblioteca estándar
-        run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
 
   # Prueba de extremo a extremo antes de publicar: solo en las PR de develop a main.
   e2e:

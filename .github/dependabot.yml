@@ -7,6 +7,8 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    cooldown:
+      default-days: 7 # no proponer versiones con menos de 7 días (ataques a la cadena de suministro)
     commit-message:
       prefix: "build(deps)" # título convencional: lo exige el check pr-title
     groups:
@@ -20,6 +22,8 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "ci(deps)"
     groups:
