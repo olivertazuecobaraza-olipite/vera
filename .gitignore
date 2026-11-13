@@ -1,4 +1,5 @@
 dist/
 cover.out
+cover.html
 *.test
 .DS_Store
