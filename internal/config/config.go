@@ -69,7 +69,7 @@ func Load(path string) (*Config, error) {
 	}
 	if err := json.Unmarshal(b, &c.File); err != nil {
 		c.File = File{}
-		return c, fmt.Errorf("el archivo de configuración %s está dañado (%v); se usan los valores por defecto", path, err)
+		return c, fmt.Errorf("el archivo de configuración %s está dañado (%w); se usan los valores por defecto", path, err)
 	}
 	return c, nil
 }

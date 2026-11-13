@@ -12,6 +12,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -440,19 +441,28 @@ func tarZst(t *testing.T, files map[string]string) []byte {
 }
 
 func TestExtractTarZst(t *testing.T) {
-	file := filepath.Join(t.TempDir(), "o.tar.zst")
-	os.WriteFile(file, tarZst(t, map[string]string{
+	// El paquete .tar.zst solo se usa en Linux. En Windows no hay bit de ejecución
+	// y crear enlaces simbólicos requiere permisos especiales: ahí se prueba solo la extracción.
+	windows := runtime.GOOS == "windows"
+	files := map[string]string{
 		"bin/ollama":              "#!/bin/sh\necho ollama\n",
 		"lib/ollama/libggml.so.1": "lib",
-		"lib/ollama/libggml.so":   "->libggml.so.1",
-	}), 0o644)
+	}
+	if !windows {
+		files["lib/ollama/libggml.so"] = "->libggml.so.1"
+	}
+	file := filepath.Join(t.TempDir(), "o.tar.zst")
+	os.WriteFile(file, tarZst(t, files), 0o644)
 	dest := t.TempDir()
 	if err := extractTarZst(file, dest); err != nil {
 		t.Fatal(err)
 	}
 	fi, err := os.Stat(filepath.Join(dest, "bin", "ollama"))
-	if err != nil || fi.Mode()&0o100 == 0 {
+	if err != nil || (!windows && fi.Mode()&0o100 == 0) {
 		t.Errorf("bin/ollama debería existir y ser ejecutable: %v %v", fi, err)
+	}
+	if windows {
+		return
 	}
 	if target, err := os.Readlink(filepath.Join(dest, "lib", "ollama", "libggml.so")); err != nil || target != "libggml.so.1" {
 		t.Errorf("enlace = %q, %v", target, err)

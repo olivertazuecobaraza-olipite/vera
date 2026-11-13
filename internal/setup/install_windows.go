@@ -23,7 +23,7 @@ func (m *Manager) install(ctx context.Context, p func(Progress)) (string, error)
 	defer os.Remove(exe)
 	p(Progress{Status: StatusInstalling})
 	if err := m.run(ctx, exe, "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/SP-"); err != nil {
-		return "", fmt.Errorf("el instalador falló: %v", err)
+		return "", fmt.Errorf("el instalador falló: %w", err)
 	}
 	return filepath.Join(m.appData, "Programs", "Ollama"), nil
 }

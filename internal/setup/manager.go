@@ -13,7 +13,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 )
@@ -227,10 +226,3 @@ func (m *Manager) waitUp(ctx context.Context, d time.Duration) bool {
 		}
 	}
 }
-
-func (m *Manager) port() string {
-	u, _ := url.Parse(m.host)
-	return u.Port()
-}
-
-func goarch() string { return runtime.GOARCH }

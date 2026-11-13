@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/olipite/vera/internal/config"
-	"github.com/olipite/vera/internal/setup"
-	"github.com/olipite/vera/internal/suggest"
-	"github.com/olipite/vera/internal/sysinfo"
-	"github.com/olipite/vera/internal/ui"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/config"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/suggest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/ui"
 )
 
 // Suggester es lo que la CLI necesita para proponer comandos (*suggest.Suggester lo cumple).

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/olipite/vera/internal/setup"
-	"github.com/olipite/vera/internal/suggest"
-	"github.com/olipite/vera/internal/ui"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/suggest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/ui"
 )
 
 var errCancelled = errors.New("cancelado")
@@ -68,7 +68,7 @@ func sizeSuffix(ctx context.Context, d Deps, model string) (string, error) {
 	case errors.Is(err, setup.ErrModelNotFound):
 		return "", fmt.Errorf("el modelo %q no existe. Búscalo en https://ollama.com/search", model)
 	case err != nil:
-		return "", nil
+		return "", nil //nolint:nilerr // si no se sabe el tamaño, simplemente no se muestra
 	}
 	return " (" + ui.HumanBytes(size) + ")", nil
 }

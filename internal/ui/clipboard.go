@@ -63,10 +63,11 @@ func (c *Clipboard) Copy(text string) error {
 func toUTF16LE(s string) []byte {
 	var b bytes.Buffer
 	b.Write([]byte{0xFF, 0xFE})
+	out := b.Bytes()
 	for _, u := range utf16.Encode([]rune(s)) {
-		binary.Write(&b, binary.LittleEndian, u)
+		out = binary.LittleEndian.AppendUint16(out, u)
 	}
-	return b.Bytes()
+	return out
 }
 
 func runWithInput(name string, args []string, input []byte) error {

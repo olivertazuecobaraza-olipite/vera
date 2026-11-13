@@ -13,11 +13,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/olipite/vera/internal/config"
-	"github.com/olipite/vera/internal/llm/ollama"
-	"github.com/olipite/vera/internal/setup"
-	"github.com/olipite/vera/internal/suggest"
-	"github.com/olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/config"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm/ollama"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/suggest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
 )
 
 type fixed struct{ model string }

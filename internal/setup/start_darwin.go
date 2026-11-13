@@ -4,6 +4,7 @@ package setup
 
 import (
 	"context"
+	"net/url"
 	"path/filepath"
 	"strings"
 )
@@ -20,4 +21,9 @@ func (m *Manager) start(ctx context.Context, bin string) error {
 		}
 	}
 	return m.spawnServe(bin)
+}
+
+func (m *Manager) port() string {
+	u, _ := url.Parse(m.host)
+	return u.Port()
 }

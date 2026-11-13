@@ -5,7 +5,7 @@ import (
 	"context"
 	"sort"
 
-	"github.com/olipite/vera/internal/setup"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup"
 )
 
 // FakeManager simula Ollama. Los campos describen el estado y apuntan lo que se ha pedido.

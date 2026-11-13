@@ -7,8 +7,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/olipite/vera/internal/llm"
-	"github.com/olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
 )
 
 // Settings es lo que el Suggester necesita de la configuración (*config.Config lo cumple).

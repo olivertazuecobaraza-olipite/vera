@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/olipite/vera/internal/llm"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm"
 )
 
 // Client habla con un servidor de Ollama.

@@ -9,13 +9,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/olipite/vera/internal/config"
-	"github.com/olipite/vera/internal/llm"
-	"github.com/olipite/vera/internal/setup"
-	"github.com/olipite/vera/internal/setup/setuptest"
-	"github.com/olipite/vera/internal/suggest"
-	"github.com/olipite/vera/internal/sysinfo"
-	"github.com/olipite/vera/internal/ui"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/config"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup/setuptest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/suggest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/ui"
 )
 
 // fakeSuggester apunta las peticiones y responde lo que se le diga.

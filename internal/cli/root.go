@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/olipite/vera/internal/llm"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm"
 )
 
 const rootHelp = `vera %s — comandos de terminal con IA local (Ollama)
@@ -44,7 +44,7 @@ func NewRootCmd(d Deps) *cobra.Command {
 		SilenceErrors: true, // los errores los escribe Run, en español
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
-				cmd.Help()
+				_ = cmd.Help()
 				return exitCode(1)
 			}
 			return runSuggest(cmd.Context(), d, strings.Join(args, " "))
@@ -102,7 +102,7 @@ func runSuggest(ctx context.Context, d Deps, query string) error {
 		return runCommand(ctx, d, sug.Command)
 	case "copy":
 		if err := d.Clipboard.Copy(sug.Command); err != nil {
-			return fmt.Errorf("no se pudo copiar: %v", err)
+			return fmt.Errorf("no se pudo copiar: %w", err)
 		}
 		d.UI.Success("Copiado al portapapeles")
 	}

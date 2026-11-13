@@ -10,8 +10,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/olipite/vera/internal/setup"
-	"github.com/olipite/vera/internal/ui"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/ui"
 )
 
 const configHelp = `vera config
