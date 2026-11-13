@@ -62,3 +62,19 @@ Las vulnerabilidades **no** se reportan en issues: sigue [SECURITY.md](SECURITY.
 ## Código de conducta
 
 Este proyecto sigue el [Código de conducta](CODE_OF_CONDUCT.md). Al participar, te comprometes a respetarlo.
+
+## Paso a paso
+
+```sh
+git switch develop && git pull
+git switch -c feat/mi-cambio            # o fix/…, docs/…
+# … cambios …
+./build.sh test
+git commit -am "feat: lo que hace el cambio"
+git push -u origin feat/mi-cambio
+gh pr create --base develop --title "feat: lo que hace el cambio" --fill
+```
+
+Cuando el CI esté en verde y la PR aceptada, se fusiona con *squash* y la rama se borra sola.
+Para publicar, el mantenedor abre una PR de `develop` a `main`: el CI añade la prueba de extremo
+a extremo y un comentario con la versión que saldrá; al fusionarla se publica la release.
