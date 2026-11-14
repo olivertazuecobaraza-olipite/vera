@@ -55,6 +55,25 @@ Las PR de colaboradores externos necesitan que el mantenedor apruebe la ejecuci�
 
 Son automáticas: al fusionar `develop` en `main`, se calcula la versión a partir de los commits, se crea la etiqueta `vX.Y.Z` y se publican los binarios con sus checksums y atestaciones de procedencia. No hay que crear etiquetas a mano (y no se puede).
 
+Cada release también publica vera en los gestores de paquetes:
+
+| Canal | Dónde | Cómo |
+|---|---|---|
+| `.deb`, `.rpm`, `.apk` | adjuntos a la release de GitHub | GoReleaser (`nfpms`) |
+| Homebrew | `olivertazuecobaraza-olipite/homebrew-tap` (`Casks/vera.rb`) | GoReleaser (`homebrew_casks`) |
+| Scoop | `olivertazuecobaraza-olipite/scoop-bucket` (`vera.json`) | GoReleaser (`scoops`) |
+| winget | PR a `microsoft/winget-pkgs` desde el fork propio (la revisa Microsoft) | GoReleaser (`winget`) |
+| AUR | `vera-bin` | GoReleaser (`aurs`) |
+| npm | `vera-ia` + `vera-ia-<so>-<arq>` | `.github/scripts/npm-packages.mjs` en `release.yml` |
+
+Los secretos están en el environment `release` (que solo puede usar `main`):
+
+- `PACKAGES_TOKEN`: token *fine-grained* con permiso de escritura en Contents y Pull requests, limitado a `homebrew-tap`, `scoop-bucket` y el fork de `winget-pkgs`.
+- `NPM_TOKEN`: token granular de npm con permiso de publicación sobre los paquetes `vera-ia*`.
+- `AUR_KEY`: clave SSH privada (sin contraseña) cuya parte pública está en la cuenta de AUR.
+
+Las versiones previas (`vX.Y.Z-rc1`) solo se publican en GitHub, no en los gestores. En cada PR, el CI genera todos los paquetes sin publicarlos y prueba a instalar el `.deb` y el de npm.
+
 ## Seguridad
 
 Las vulnerabilidades **no** se reportan en issues: sigue [SECURITY.md](SECURITY.md).

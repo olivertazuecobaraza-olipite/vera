@@ -42,6 +42,21 @@ irm https://raw.githubusercontent.com/olivertazuecobaraza-olipite/vera/main/inst
 
 Los instaladores descargan la última [release](https://github.com/olivertazuecobaraza-olipite/vera/releases/latest) y **comprueban su suma SHA-256** antes de instalar. Para una versión concreta: `VERA_VERSION=1.2.0` (o `$env:VERA_VERSION` en PowerShell). Si prefieres leer el script antes de ejecutarlo, descárgalo primero y ábrelo.
 
+**Con un gestor de paquetes** (disponible a partir de la versión 1.1.0):
+
+| Gestor | Comando | `ia` |
+|---|---|---|
+| Homebrew (macOS / Linux) | `brew install olivertazuecobaraza-olipite/tap/vera` | ✓ |
+| npm · pnpm · yarn · bun | `npm i -g vera-ia` · `pnpm add -g vera-ia` · `yarn global add vera-ia` · `bun add -g vera-ia` | ✓ |
+| winget (Windows) | `winget install Olipite.Vera` | — |
+| Scoop (Windows) | `scoop bucket add vera https://github.com/olivertazuecobaraza-olipite/scoop-bucket` y `scoop install vera` | — |
+| Debian / Ubuntu | descarga el `.deb` de la [release](https://github.com/olivertazuecobaraza-olipite/vera/releases/latest) y `sudo apt install ./vera_*_amd64.deb` | ✓ |
+| Fedora / RHEL / openSUSE | descarga el `.rpm` y `sudo dnf install ./vera-*.x86_64.rpm` | ✓ |
+| Alpine | descarga el `.apk` y `sudo apk add --allow-untrusted ./vera_*_x86_64.apk` | ✓ |
+| Arch (AUR) | `yay -S vera-bin` (o `paru -S vera-bin`) | ✓ |
+
+En npm el paquete se llama `vera-ia` (el nombre `vera` ya está ocupado), pero el comando que se instala es `vera`. Los paquetes `.deb`, `.rpm` y `.apk` no están firmados con GPG: su integridad se comprueba con `checksums.txt` y con la atestación (ver abajo).
+
 **Otras formas:**
 - A mano: descarga el `.tar.gz` / `.zip` de tu sistema desde las [releases](https://github.com/olivertazuecobaraza-olipite/vera/releases/latest) y pon el binario en tu PATH.
 - Con Go 1.25+: `go install github.com/olivertazuecobaraza-olipite/vera/cmd/vera@latest`
