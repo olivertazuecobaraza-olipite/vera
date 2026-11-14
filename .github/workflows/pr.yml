@@ -1,0 +1,102 @@
+# Reglas de las PR que dependen del título o de la rama (se re-ejecutan al editar la PR, sin repetir todo el CI).
+name: PR
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+    branches: [develop, main]
+
+permissions: {}
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # El título será el mensaje del commit al fusionar con squash: decide la próxima versión.
+  pr-title:
+    name: pr-title
+    if: github.base_ref == 'develop'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: amannn/action-semantic-pull-request@2252a14e810aa9b85c2d560bd7070c802206ecf6 # v6.1.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            test
+            refactor
+            perf
+            build
+            ci
+            chore
+            style
+            revert
+            sec
+          subjectPatternError: |
+            El título «{title}» no sigue Conventional Commits. Ejemplo: «feat: copiar el comando con la tecla c».
+            Ver CONTRIBUTING.md.
+
+  # A main solo se llega desde develop (de este mismo repositorio).
+  pr-origen:
+    name: pr-origen
+    if: github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: La PR debe venir de develop
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ "$HEAD_REF" != "develop" ] || [ "$HEAD_REPO" != "$REPO" ]; then
+            echo "::error::A main solo se puede fusionar desde develop de este repositorio (esta PR viene de $HEAD_REPO:$HEAD_REF)."
+            exit 1
+          fi
+          echo "Origen correcto: $HEAD_REPO:$HEAD_REF"
+
+  # Anuncia en la PR qué versión se publicará al fusionar y qué incluye.
+  release-preview:
+    name: release-preview
+    if: github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: stable
+          check-latest: true
+          cache: false
+      - name: Calcular versión y cambios
+        id: next
+        run: |
+          version=$(.github/scripts/next-version.sh)
+          last=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || true)
+          range="${last:+$last..}HEAD"
+          {
+            echo "### 🚀 Al fusionar se publicará **vera $version**"
+            echo
+            echo "Cambios desde ${last:-el inicio}:"
+            echo
+            git log "$range" --no-merges --format='- %s' | grep -v '^- Merge ' || echo "- (sin cambios)"
+            echo
+            echo "<sub>La versión se calcula a partir de los commits convencionales (feat → minor, fix y resto → patch, ! → major).</sub>"
+          } > preview.md
+          cat preview.md
+      - name: Comentar en la PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file preview.md --edit-last --create-if-none

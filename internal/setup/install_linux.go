@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 func (m *Manager) candidates() []string {
@@ -29,7 +30,9 @@ func (m *Manager) install(ctx context.Context, p func(Progress)) (string, error)
 	p(Progress{Status: StatusExtracting})
 	os.RemoveAll(filepath.Join(dest, "lib", "ollama")) // librerías de una versión anterior
 	if err := extractTarZst(file, dest); err != nil {
-		return "", fmt.Errorf("no se pudo descomprimir: %v", err)
+		return "", fmt.Errorf("no se pudo descomprimir: %w", err)
 	}
 	return filepath.Join(dest, "bin", "ollama"), nil
 }
+
+func goarch() string { return runtime.GOARCH }

@@ -26,7 +26,7 @@ func (m *Manager) download(ctx context.Context, rawURL string, p func(Progress))
 		if ctx.Err() != nil {
 			return "", ctx.Err()
 		}
-		return "", fmt.Errorf("no hay conexión con %s (%v)", rawURL, err)
+		return "", fmt.Errorf("no hay conexión con %s (%w)", rawURL, err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
@@ -48,7 +48,7 @@ func (m *Manager) download(ctx context.Context, rawURL string, p func(Progress))
 		if ctx.Err() != nil {
 			return "", ctx.Err()
 		}
-		return "", fmt.Errorf("la descarga se cortó (%v). Revisa la conexión y repite", err)
+		return "", fmt.Errorf("la descarga se cortó (%w). Revisa la conexión y repite", err)
 	}
 	return f.Name(), nil
 }

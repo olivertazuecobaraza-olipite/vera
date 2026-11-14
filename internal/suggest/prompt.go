@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
 )
 
 //go:embed templates/system.tmpl

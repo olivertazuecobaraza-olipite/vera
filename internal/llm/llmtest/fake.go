@@ -4,7 +4,7 @@ package llmtest
 import (
 	"context"
 
-	"github.com/olipite/vera/internal/llm"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm"
 )
 
 // FakeProvider devuelve lo que se le diga y apunta las peticiones recibidas.

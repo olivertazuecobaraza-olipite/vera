@@ -39,7 +39,7 @@ func (m *Manager) install(ctx context.Context, p func(Progress)) (string, error)
 			return "", err
 		}
 		if err := m.run(ctx, "ditto", "-x", "-k", zip, dest); err != nil {
-			return "", fmt.Errorf("no se pudo descomprimir: %v", err)
+			return "", fmt.Errorf("no se pudo descomprimir: %w", err)
 		}
 	}
 	return filepath.Join(dest, "Ollama.app"), nil

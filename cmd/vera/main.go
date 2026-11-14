@@ -9,14 +9,14 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/olipite/vera/internal/cli"
-	"github.com/olipite/vera/internal/config"
-	"github.com/olipite/vera/internal/llm/ollama"
-	"github.com/olipite/vera/internal/setup"
-	"github.com/olipite/vera/internal/setup/setuptest"
-	"github.com/olipite/vera/internal/suggest"
-	"github.com/olipite/vera/internal/sysinfo"
-	"github.com/olipite/vera/internal/ui"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/cli"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/config"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm/ollama"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/setup/setuptest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/suggest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/ui"
 )
 
 // version se fija al compilar: go build -ldflags "-X main.version=1.2.3"

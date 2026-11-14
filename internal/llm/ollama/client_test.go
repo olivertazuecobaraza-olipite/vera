@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/olipite/vera/internal/llm"
-	"github.com/olipite/vera/internal/llm/ollama"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm/ollama"
 )
 
 func TestGenerate(t *testing.T) {

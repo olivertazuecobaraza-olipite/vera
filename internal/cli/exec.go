@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
 )
 
 // runCommand ejecuta el comando aceptado y termina vera con su mismo código de salida.
@@ -39,7 +39,7 @@ func ExecShell(_ context.Context, info sysinfo.Info, command string) (int, error
 		if errors.As(err, &ee) {
 			return ee.ExitCode(), nil
 		}
-		return 0, fmt.Errorf("no se pudo ejecutar con %s: %v", info.Shell, err)
+		return 0, fmt.Errorf("no se pudo ejecutar con %s: %w", info.Shell, err)
 	}
 	return 0, nil
 }

@@ -3,7 +3,7 @@ package suggest_test
 import (
 	"testing"
 
-	"github.com/olipite/vera/internal/suggest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/suggest"
 )
 
 // Añadir aquí cada comando peligroso nuevo ANTES de tocar IsDangerous.

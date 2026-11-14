@@ -113,7 +113,7 @@ func (m *Manager) Pull(ctx context.Context, name string, p func(Progress)) error
 			if ctx.Err() != nil {
 				return ctx.Err()
 			}
-			return fmt.Errorf("se perdió la conexión con Ollama (%v). Repite el comando para continuar", err)
+			return fmt.Errorf("se perdió la conexión con Ollama (%w). Repite el comando para continuar", err)
 		}
 		if msg.Error != "" {
 			return pullError(name, msg.Error)

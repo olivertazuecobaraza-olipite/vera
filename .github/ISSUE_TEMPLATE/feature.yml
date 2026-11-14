@@ -1,0 +1,21 @@
+name: Idea o mejora
+description: Propón una funcionalidad nueva o un cambio
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qué problema resuelve
+      description: Qué querías hacer con vera y por qué ahora no se puede (o cuesta).
+    validations:
+      required: true
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+      description: Cómo te imaginas que funcionaría.
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas
+      description: Otras formas de resolverlo que hayas pensado.

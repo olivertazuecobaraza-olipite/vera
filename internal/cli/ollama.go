@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/olipite/vera/internal/config"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/config"
 )
 
 const ollamaHelp = `vera ollama [modelo]

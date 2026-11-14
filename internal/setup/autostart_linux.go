@@ -102,7 +102,7 @@ WantedBy=default.target
 	}
 	for _, args := range [][]string{{"daemon-reload"}, {"enable", userUnit}} {
 		if out, err := m.output(ctx, "systemctl", append([]string{"--user"}, args...)...); err != nil {
-			return fmt.Errorf("systemctl %s: %v %s", strings.Join(args, " "), err, out)
+			return fmt.Errorf("systemctl %s: %w %s", strings.Join(args, " "), err, out)
 		}
 	}
 	return nil

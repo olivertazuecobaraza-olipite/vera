@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/olipite/vera/internal/suggest"
-	"github.com/olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/suggest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
 )
 
 var update = flag.Bool("update", false, "regenera los golden files")

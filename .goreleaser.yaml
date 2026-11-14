@@ -1,0 +1,87 @@
+# Configuración de las releases de vera. La ejecuta .github/workflows/release.yml
+# al fusionar develop en main (nunca a mano). Prueba local: goreleaser release --snapshot --clean
+version: 2
+
+project_name: vera
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: vera
+    main: ./cmd/vera
+    binary: vera
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+    goos: [darwin, linux, windows]
+    goarch: [amd64, arm64]
+    mod_timestamp: "{{ .CommitTimestamp }}" # compilaciones reproducibles
+
+archives:
+  - id: vera
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-dev"
+
+changelog:
+  sort: asc
+  use: git
+  filters:
+    exclude:
+      - "^Merge pull request"
+      - "^Merge branch"
+  groups:
+    - title: "⚠️ Cambios incompatibles"
+      regexp: '^.*?(\(\w+\))?!:'
+      order: 0
+    - title: "Novedades"
+      regexp: '^.*?feat(\(.+\))??:'
+      order: 1
+    - title: "Correcciones"
+      regexp: '^.*?fix(\(.+\))??:'
+      order: 2
+    - title: "Seguridad"
+      regexp: '^.*?sec(urity)?(\(.+\))??:'
+      order: 3
+    - title: "Documentación"
+      regexp: '^.*?docs(\(.+\))??:'
+      order: 4
+    - title: "Otros cambios"
+      order: 999
+
+release:
+  github:
+    owner: olivertazuecobaraza-olipite
+    name: vera
+  name_template: "vera {{ .Tag }}"
+  header: |
+    ## Instalación
+
+    ```sh
+    # macOS / Linux
+    curl -fsSL https://raw.githubusercontent.com/olivertazuecobaraza-olipite/vera/main/install.sh | sh
+    ```
+    ```powershell
+    # Windows (PowerShell)
+    irm https://raw.githubusercontent.com/olivertazuecobaraza-olipite/vera/main/install.ps1 | iex
+    ```
+
+    Verifica la procedencia de cualquier archivo con
+    `gh attestation verify <archivo> --repo olivertazuecobaraza-olipite/vera`.

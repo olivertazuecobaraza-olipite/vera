@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/olipite/vera/internal/llm"
-	"github.com/olipite/vera/internal/llm/llmtest"
-	"github.com/olipite/vera/internal/suggest"
-	"github.com/olipite/vera/internal/sysinfo"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/llm/llmtest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/suggest"
+	"github.com/olivertazuecobaraza-olipite/vera/internal/sysinfo"
 )
 
 type settings struct {

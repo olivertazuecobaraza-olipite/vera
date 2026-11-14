@@ -1,5 +1,10 @@
 # vera
 
+[![CI](https://github.com/olivertazuecobaraza-olipite/vera/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/olivertazuecobaraza-olipite/vera/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/olivertazuecobaraza-olipite/vera)](https://github.com/olivertazuecobaraza-olipite/vera/releases/latest)
+[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/olivertazuecobaraza-olipite/vera/badge)](https://scorecard.dev/viewer/?uri=github.com/olivertazuecobaraza-olipite/vera)
+
 Describe en lenguaje natural lo que quieres hacer en la terminal y un modelo de IA **local** (con [Ollama](https://ollama.com)) te propone el comando. Antes de ejecutarlo te pide confirmación. No envía nada a internet.
 
 El comando se puede usar como `vera` o como `ia`: son lo mismo.
@@ -25,22 +30,26 @@ Hace falta [Ollama](https://ollama.com) y un modelo. vera puede instalar las dos
 
 ## Instalación
 
-Descarga el binario de tu sistema de `dist/`:
-
-| Sistema | Archivo |
-|---|---|
-| Mac Apple Silicon | `vera-darwin-arm64` |
-| Mac Intel | `vera-darwin-amd64` |
-| Linux x64 / ARM | `vera-linux-amd64` / `vera-linux-arm64` |
-| Windows x64 / ARM | `vera-windows-amd64.exe` / `vera-windows-arm64.exe` |
-
-**macOS / Linux:** `./install.sh` (lo copia a `~/.local/bin/vera` y crea el alias `ia`).
-
-**Windows** (PowerShell, en la carpeta del proyecto o junto al `.exe`):
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1
+**macOS / Linux** — se instala en `~/.local/bin` (con el alias `ia`), sin sudo:
+```sh
+curl -fsSL https://raw.githubusercontent.com/olivertazuecobaraza-olipite/vera/main/install.sh | sh
 ```
-Lo copia a `%LOCALAPPDATA%\Programs\vera` (como `vera.exe` e `ia.exe`) y lo añade al PATH. Abre una terminal nueva después.
+
+**Windows** (PowerShell) — se instala en `%LOCALAPPDATA%\Programs\vera` (como `vera.exe` e `ia.exe`) y se añade al PATH; abre una terminal nueva después:
+```powershell
+irm https://raw.githubusercontent.com/olivertazuecobaraza-olipite/vera/main/install.ps1 | iex
+```
+
+Los instaladores descargan la última [release](https://github.com/olivertazuecobaraza-olipite/vera/releases/latest) y **comprueban su suma SHA-256** antes de instalar. Para una versión concreta: `VERA_VERSION=1.2.0` (o `$env:VERA_VERSION` en PowerShell). Si prefieres leer el script antes de ejecutarlo, descárgalo primero y ábrelo.
+
+**Otras formas:**
+- A mano: descarga el `.tar.gz` / `.zip` de tu sistema desde las [releases](https://github.com/olivertazuecobaraza-olipite/vera/releases/latest) y pon el binario en tu PATH.
+- Con Go 1.25+: `go install github.com/olivertazuecobaraza-olipite/vera/cmd/vera@latest`
+
+**Verificar la procedencia** — cada archivo de una release lleva una atestación firmada por GitHub Actions que prueba que se compiló en este repositorio:
+```sh
+gh attestation verify vera_1.0.0_linux_amd64.tar.gz --repo olivertazuecobaraza-olipite/vera
+```
 
 ## Instalar Ollama y elegir modelo: `vera ollama`
 
@@ -93,7 +102,7 @@ Los ajustes se guardan en `config.json` dentro de la carpeta de configuración d
 
 ## Desarrollo
 
-Hace falta [Go](https://go.dev) 1.22+. La arquitectura está explicada en [ARQUITECTURA.md](ARQUITECTURA.md).
+Hace falta [Go](https://go.dev) 1.25+. La arquitectura está explicada en [ARQUITECTURA.md](ARQUITECTURA.md) y cómo contribuir (ramas, commits convencionales, releases) en [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ```
 ./build.sh                  # genera todos los binarios en dist/
@@ -118,3 +127,9 @@ internal/ui/       colores, preguntas, barra de progreso, spinner y portapapeles
 ## Aviso
 
 Un modelo pequeño se equivoca a veces. **Lee el comando antes de pulsar `s`**, sobre todo si borra, mueve o sobrescribe archivos.
+
+## Seguridad y licencia
+
+- Vulnerabilidades: en privado, siguiendo [SECURITY.md](SECURITY.md).
+- Código de conducta: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+- Licencia: [MIT](LICENSE).
