@@ -69,6 +69,7 @@ Cada release también publica vera en los gestores de paquetes:
 Los secretos están en el environment `release` (que solo puede usar `main`):
 
 - `PACKAGES_TOKEN`: token *fine-grained* con permiso de escritura en Contents y Pull requests, limitado a `homebrew-tap`, `scoop-bucket` y el fork de `winget-pkgs`.
+- `WINGET_TOKEN`: token clásico con el scope `public_repo`, solo para abrir la PR en `microsoft/winget-pkgs` (los tokens fine-grained no pueden contribuir a repos públicos ajenos).
 - `NPM_TOKEN`: token granular de npm con permiso de publicación sobre los paquetes `vera-ia*`.
 - `AUR_KEY`: clave SSH privada (sin contraseña) cuya parte pública está en la cuenta de AUR.
 

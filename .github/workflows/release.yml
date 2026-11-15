@@ -62,6 +62,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }} # homebrew-tap, scoop-bucket y el fork de winget-pkgs
+          WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }} # solo para abrir la PR en microsoft/winget-pkgs
           AUR_KEY: ${{ secrets.AUR_KEY }}
 
       # npm, pnpm, yarn y bun: «vera-ia» + un paquete por plataforma (npms de GoReleaser es solo de Pro).

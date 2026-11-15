@@ -113,7 +113,8 @@ release:
 # Se publican en cada release desde release.yml (environment «release»). Con
 # skip_upload: auto, las versiones previas (v1.2.0-rc1) no llegan a los gestores.
 # Secretos: PACKAGES_TOKEN (PAT con escritura en homebrew-tap, scoop-bucket y el
-# fork de winget-pkgs) y AUR_KEY; NPM_TOKEN lo usa npm-publish.sh. Ver CONTRIBUTING.md § Releases.
+# fork de winget-pkgs), WINGET_TOKEN (abrir la PR en microsoft/winget-pkgs) y
+# AUR_KEY; NPM_TOKEN lo usa .github/scripts/npm-packages.mjs desde release.yml. Ver CONTRIBUTING.md § Releases.
 
 # brew install olivertazuecobaraza-olipite/tap/vera
 homebrew_casks:
@@ -189,6 +190,9 @@ winget:
       pull_request:
         enabled: true
         draft: false
+        # Abrir la PR en microsoft/winget-pkgs necesita un token clásico (public_repo):
+        # los fine-grained no pueden contribuir a repos públicos ajenos.
+        token: "{{ .Env.WINGET_TOKEN }}"
         base:
           owner: microsoft
           name: winget-pkgs
