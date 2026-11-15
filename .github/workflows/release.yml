@@ -19,7 +19,7 @@ jobs:
     environment: release
     permissions:
       contents: write # crear la etiqueta y la release
-      id-token: write # firmar las atestaciones
+      id-token: write # firmar las atestaciones y publicar en npm (trusted publishing)
       attestations: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -52,6 +52,7 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$TAG" -f sha="$GITHUB_SHA" > /dev/null
           git tag "$TAG" "$GITHUB_SHA"
 
+      # Release de GitHub + paquetes deb/rpm/apk + Homebrew, Scoop, winget y AUR (ver .goreleaser.yaml).
       - name: Publicar con GoReleaser
         if: steps.version.outputs.skip == 'false'
         uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
@@ -60,6 +61,32 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }} # homebrew-tap, scoop-bucket y el fork de winget-pkgs
+          WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }} # solo para abrir la PR en microsoft/winget-pkgs
+          AUR_KEY: ${{ secrets.AUR_KEY }}
+
+      # npm, pnpm, yarn y bun: «vera-ia» + un paquete por plataforma (@olipite/vera-<so>-<arq>) (npms de GoReleaser es solo de Pro).
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: steps.version.outputs.skip == 'false'
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      # Trusted publishing (OIDC): npm confía en este workflow + environment «release»; sin tokens.
+      # Cada paquete (vera-ia y @olipite/vera-*) tiene configurado en npmjs.com: olivertazuecobaraza-olipite/vera,
+      # release.yml, environment release. La procedencia se firma sola.
+      - name: Publicar en npm
+        if: steps.version.outputs.skip == 'false' && !contains(steps.version.outputs.tag, '-')
+        run: |
+          node .github/scripts/npm-packages.mjs dist dist/npm
+          # Primero las plataformas y el principal al final; si se relanza, salta lo ya publicado.
+          while read -r pkg; do
+            version=$(jq -r .version "dist/npm/$pkg/package.json")
+            if npm view "$pkg@$version" version > /dev/null 2>&1; then
+              echo "$pkg@$version ya está publicado"; continue
+            fi
+            (cd "dist/npm/$pkg" && npm publish --access public)
+          done < dist/npm/order.txt
 
       - name: Atestaciones de procedencia
         if: steps.version.outputs.skip == 'false'
@@ -68,4 +95,7 @@ jobs:
           subject-path: |
             dist/*.tar.gz
             dist/*.zip
+            dist/*.deb
+            dist/*.rpm
+            dist/*.apk
             dist/checksums.txt
