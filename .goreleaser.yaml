@@ -90,6 +90,8 @@ changelog:
       order: 999
 
 release:
+  # Al repetir la publicación (workflow_dispatch en release.yml) se reemplazan los archivos.
+  replace_existing_artifacts: true
   github:
     owner: olivertazuecobaraza-olipite
     name: vera
