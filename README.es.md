@@ -53,9 +53,6 @@ Elige lo que ya uses. Todos instalan el mismo binario, con atestación de compil
 | 🐧 **Linux** | script, o el paquete de tu distribución | Homebrew · `.deb` · `.rpm` · `.apk` · npm · Go |
 | 🪟 **Windows** | `winget install Olipite.Vera` | script de PowerShell · Scoop · npm/pnpm/yarn/bun · Go |
 
-> [!NOTE]
-> Los gestores de paquetes (Homebrew, winget, Scoop, `.deb`/`.rpm`/`.apk`) están disponibles **a partir de la v1.1.0**. npm y los scripts ya funcionan.
-
 <details>
 <summary><b>🍺 Homebrew</b> (macOS · Linux)</summary>
 
