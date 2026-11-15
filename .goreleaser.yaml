@@ -33,6 +33,29 @@ archives:
       - LICENSE
       - README.md
 
+# Paquetes de Linux que se adjuntan a la release: apt/dpkg (.deb), dnf/yum/zypper (.rpm) y apk (Alpine).
+nfpms:
+  - id: vera
+    ids: [vera]
+    package_name: vera
+    file_name_template: "{{ .ConventionalFileName }}"
+    vendor: "Oliver Tazueco"
+    maintainer: "Oliver Tazueco"
+    description: "Comandos de terminal con IA local (Ollama)"
+    homepage: "https://github.com/olivertazuecobaraza-olipite/vera"
+    license: MIT
+    formats: [deb, rpm, apk]
+    bindir: /usr/bin
+    section: utils
+    contents:
+      - src: vera # «ia» es un alias: un enlace al mismo binario, como en install.sh
+        dst: /usr/bin/ia
+        type: symlink
+      - src: LICENSE
+        dst: /usr/share/licenses/vera/LICENSE
+        file_info:
+          mode: 0644
+
 checksum:
   name_template: checksums.txt
   algorithm: sha256
@@ -85,3 +108,118 @@ release:
 
     Verifica la procedencia de cualquier archivo con
     `gh attestation verify <archivo> --repo olivertazuecobaraza-olipite/vera`.
+
+# ── Gestores de paquetes ──────────────────────────────────────────────────────
+# Se publican en cada release desde release.yml (environment «release»). Con
+# skip_upload: auto, las versiones previas (v1.2.0-rc1) no llegan a los gestores.
+# Secretos: PACKAGES_TOKEN (PAT con escritura en homebrew-tap, scoop-bucket y el
+# fork de winget-pkgs), WINGET_TOKEN (abrir la PR en microsoft/winget-pkgs) y
+# AUR_KEY. npm (release.yml) usa trusted publishing, sin secretos. Ver CONTRIBUTING.md § Releases.
+
+# brew install olivertazuecobaraza-olipite/tap/vera
+homebrew_casks:
+  - name: vera
+    ids: [vera]
+    binaries: [vera]
+    custom_block: |
+      binary "vera", target: "ia" # «ia» es un alias de vera, como en install.sh
+    directory: Casks
+    description: "Comandos de terminal con IA local (Ollama)"
+    homepage: "https://github.com/olivertazuecobaraza-olipite/vera"
+    commit_author:
+      name: vera-release-bot
+      email: vera-release-bot@users.noreply.github.com
+    commit_msg_template: "vera {{ .Tag }}"
+    skip_upload: auto
+    # Los binarios no están firmados por Apple: sin esto macOS los bloquea («está dañado»).
+    hooks:
+      post:
+        install_steps: |
+          on_macos do
+            run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{ .StagedPath }}/vera"]
+          end
+    repository:
+      owner: olivertazuecobaraza-olipite
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.PACKAGES_TOKEN }}"
+
+# scoop bucket add vera https://github.com/olivertazuecobaraza-olipite/scoop-bucket && scoop install vera
+scoops:
+  - name: vera
+    ids: [vera]
+    description: "Comandos de terminal con IA local (Ollama)"
+    homepage: "https://github.com/olivertazuecobaraza-olipite/vera"
+    license: MIT
+    commit_author:
+      name: vera-release-bot
+      email: vera-release-bot@users.noreply.github.com
+    commit_msg_template: "vera {{ .Tag }}"
+    skip_upload: auto
+    repository:
+      owner: olivertazuecobaraza-olipite
+      name: scoop-bucket
+      branch: main
+      token: "{{ .Env.PACKAGES_TOKEN }}"
+
+# winget install Olipite.Vera — abre una PR en microsoft/winget-pkgs desde el fork propio.
+winget:
+  - name: vera
+    ids: [vera]
+    publisher: Olipite
+    package_identifier: Olipite.Vera
+    package_name: vera
+    homepage: "https://github.com/olivertazuecobaraza-olipite/vera"
+    short_description: "Comandos de terminal con IA local (Ollama)"
+    license: MIT
+    license_url: "https://github.com/olivertazuecobaraza-olipite/vera/blob/main/LICENSE"
+    publisher_url: "https://github.com/olivertazuecobaraza-olipite"
+    publisher_support_url: "https://github.com/olivertazuecobaraza-olipite/vera/issues"
+    release_notes_url: "https://github.com/olivertazuecobaraza-olipite/vera/releases/tag/{{ .Tag }}"
+    tags: [cli, ai, ollama, terminal]
+    commit_author:
+      name: vera-release-bot
+      email: vera-release-bot@users.noreply.github.com
+    commit_msg_template: "New version: {{ .PackageIdentifier }} {{ .Version }}"
+    skip_upload: auto
+    repository:
+      owner: olivertazuecobaraza-olipite
+      name: winget-pkgs
+      branch: "Olipite.Vera-{{ .Version }}"
+      token: "{{ .Env.PACKAGES_TOKEN }}"
+      pull_request:
+        enabled: true
+        draft: false
+        # Abrir la PR en microsoft/winget-pkgs necesita un token clásico (public_repo):
+        # los fine-grained no pueden contribuir a repos públicos ajenos.
+        token: "{{ .Env.WINGET_TOKEN }}"
+        base:
+          owner: microsoft
+          name: winget-pkgs
+          branch: master
+
+# npm/pnpm/yarn/bun: los publica .github/scripts/npm-packages.mjs desde release.yml (npms de GoReleaser es solo de Pro).
+
+# yay -S vera-bin
+# EN PAUSA: el registro de cuentas de AUR está cerrado. Se genera el PKGBUILD (y el CI lo
+# valida) pero no se sube. Cuando haya cuenta con la clave de AUR_KEY: skip_upload: auto.
+aurs:
+  - name: vera-bin
+    ids: [vera]
+    description: "Comandos de terminal con IA local (Ollama)"
+    homepage: "https://github.com/olivertazuecobaraza-olipite/vera"
+    license: MIT
+    maintainers:
+      - "Oliver Tazueco"
+    commit_author:
+      name: vera-release-bot
+      email: vera-release-bot@users.noreply.github.com
+    private_key: "{{ .Env.AUR_KEY }}"
+    git_url: "ssh://aur@aur.archlinux.org/vera-bin.git"
+    skip_upload: true
+    provides: [vera]
+    conflicts: [vera]
+    package: |-
+      install -Dm755 "./vera" "${pkgdir}/usr/bin/vera"
+      ln -s vera "${pkgdir}/usr/bin/ia"
+      install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/vera/LICENSE"

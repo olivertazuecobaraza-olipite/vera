@@ -101,11 +101,34 @@ jobs:
           go-version: stable
           check-latest: true
           cache: false # compila lo mismo que se publica: sin caché (evita envenenamiento)
-      - name: Compilar los 6 binarios (darwin, linux, windows × amd64, arm64)
+      - name: Validar .goreleaser.yaml
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+        with:
+          version: "~> v2"
+          args: check
+      - name: Compilar los 6 binarios y los paquetes (deb/rpm/apk, Homebrew, Scoop, winget, AUR)
         uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
         with:
           version: "~> v2"
           args: release --snapshot --clean --skip=publish
+      # Se prueban los paquetes tal como los instalaría un usuario (sin publicar nada).
+      - name: Probar el paquete .deb
+        run: |
+          sudo dpkg -i dist/*_amd64.deb
+          vera --version && ia --version
+          sudo dpkg -r vera
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      # Instala los tarballs que acaba de generar este mismo job (sin registro): no hay lockfile que valga.
+      - name: Probar el paquete de npm
+        run: | # zizmor: ignore[adhoc-packages]
+          node .github/scripts/npm-packages.mjs dist dist/npm
+          mkdir -p dist/tgz
+          for pkg in @olipite/vera-linux-x64 vera-ia; do npm pack "./dist/npm/$pkg" --pack-destination dist/tgz; done
+          npm install --global --prefix "$RUNNER_TEMP/npm" dist/tgz/*.tgz
+          "$RUNNER_TEMP/npm/bin/vera" --version && "$RUNNER_TEMP/npm/bin/ia" --version
 
   govulncheck:
     name: govulncheck
