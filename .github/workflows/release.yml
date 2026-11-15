@@ -65,7 +65,7 @@ jobs:
           WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }} # solo para abrir la PR en microsoft/winget-pkgs
           AUR_KEY: ${{ secrets.AUR_KEY }}
 
-      # npm, pnpm, yarn y bun: «vera-ia» + un paquete por plataforma (npms de GoReleaser es solo de Pro).
+      # npm, pnpm, yarn y bun: «vera-ia» + un paquete por plataforma (@olipite/vera-<so>-<arq>) (npms de GoReleaser es solo de Pro).
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.version.outputs.skip == 'false'
         with:
@@ -73,7 +73,7 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       # Trusted publishing (OIDC): npm confía en este workflow + environment «release»; sin tokens.
-      # Cada paquete vera-ia* tiene configurado en npmjs.com: olivertazuecobaraza-olipite/vera,
+      # Cada paquete (vera-ia y @olipite/vera-*) tiene configurado en npmjs.com: olivertazuecobaraza-olipite/vera,
       # release.yml, environment release. La procedencia se firma sola.
       - name: Publicar en npm
         if: steps.version.outputs.skip == 'false' && !contains(steps.version.outputs.tag, '-')

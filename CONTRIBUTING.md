@@ -64,7 +64,7 @@ Cada release también publica vera en los gestores de paquetes:
 | Scoop | `olivertazuecobaraza-olipite/scoop-bucket` (`vera.json`) | GoReleaser (`scoops`) |
 | winget | PR a `microsoft/winget-pkgs` desde el fork propio (la revisa Microsoft) | GoReleaser (`winget`) |
 | AUR | `vera-bin` | GoReleaser (`aurs`) |
-| npm | `vera-ia` + `vera-ia-<so>-<arq>` | `.github/scripts/npm-packages.mjs` en `release.yml` |
+| npm | `vera-ia` + `@olipite/vera-<so>-<arq>` | `.github/scripts/npm-packages.mjs` en `release.yml` |
 
 Los secretos están en el environment `release` (que solo puede usar `main`):
 
@@ -72,7 +72,7 @@ Los secretos están en el environment `release` (que solo puede usar `main`):
 - `WINGET_TOKEN`: token clásico con el scope `public_repo`, solo para abrir la PR en `microsoft/winget-pkgs` (los tokens fine-grained no pueden contribuir a repos públicos ajenos).
 - `AUR_KEY`: clave SSH privada (sin contraseña) cuya parte pública está en la cuenta de AUR.
 
-npm no usa ningún secreto: cada paquete `vera-ia*` tiene configurado *trusted publishing* en npmjs.com (repositorio `olivertazuecobaraza-olipite/vera`, workflow `release.yml`, environment `release`), así que solo ese workflow puede publicarlos. Un paquete nuevo hay que publicarlo la primera vez a mano y configurarle lo mismo.
+npm no usa ningún secreto: cada paquete (`vera-ia` y `@olipite/vera-*`) tiene configurado *trusted publishing* en npmjs.com (repositorio `olivertazuecobaraza-olipite/vera`, workflow `release.yml`, environment `release`), así que solo ese workflow puede publicarlos. Un paquete nuevo hay que publicarlo la primera vez a mano y configurarle lo mismo.
 
 Las versiones previas (`vX.Y.Z-rc1`) solo se publican en GitHub, no en los gestores. En cada PR, el CI genera todos los paquetes sin publicarlos y prueba a instalar el `.deb` y el de npm.
 

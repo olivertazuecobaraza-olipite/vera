@@ -126,7 +126,7 @@ jobs:
         run: | # zizmor: ignore[adhoc-packages]
           node .github/scripts/npm-packages.mjs dist dist/npm
           mkdir -p dist/tgz
-          for pkg in vera-ia-linux-x64 vera-ia; do npm pack "./dist/npm/$pkg" --pack-destination dist/tgz; done
+          for pkg in @olipite/vera-linux-x64 vera-ia; do npm pack "./dist/npm/$pkg" --pack-destination dist/tgz; done
           npm install --global --prefix "$RUNNER_TEMP/npm" dist/tgz/*.tgz
           "$RUNNER_TEMP/npm/bin/vera" --version && "$RUNNER_TEMP/npm/bin/ia" --version
 

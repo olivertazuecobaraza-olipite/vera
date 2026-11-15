@@ -3,8 +3,8 @@
 //
 //   node .github/scripts/npm-packages.mjs [dist] [salida]     (por defecto: dist  dist/npm)
 //
-// Patrón de esbuild/biome: un paquete por plataforma (vera-ia-darwin-arm64, …) con el
-// binario dentro y campos os/cpu, y el paquete principal «vera-ia», que los declara como
+// Patrón de esbuild/biome: un paquete por plataforma con scope (@olipite/vera-darwin-arm64, …)
+// con el binario dentro y campos os/cpu, y el paquete principal «vera-ia», que los declara como
 // optionalDependencies y trae un lanzador. npm, pnpm, yarn y bun instalan solo el de tu
 // plataforma, y no hace falta ningún script postinstall (pnpm y bun los bloquean por defecto).
 //
@@ -15,6 +15,7 @@ import { join } from "node:path";
 const dist = process.argv[2] ?? "dist";
 const out = process.argv[3] ?? join(dist, "npm");
 const NAME = "vera-ia";
+const SCOPE = "@olipite/vera"; // paquetes de plataforma: con scope (sin scope, npm los marca como spam)
 
 const meta = JSON.parse(readFileSync(join(dist, "metadata.json"), "utf8"));
 const version = meta.version;
@@ -37,7 +38,7 @@ rmSync(out, { recursive: true, force: true });
 const platforms = [];
 for (const a of artifacts) {
   if (a.type !== "Binary" || !os[a.goos] || !cpu[a.goarch]) continue;
-  const name = `${NAME}-${os[a.goos]}-${cpu[a.goarch]}`;
+  const name = `${SCOPE}-${os[a.goos]}-${cpu[a.goarch]}`;
   const exe = a.goos === "windows" ? "vera.exe" : "vera";
   const dir = join(out, name);
   mkdirSync(join(dir, "bin"), { recursive: true });
@@ -78,7 +79,7 @@ writeFileSync(
 "use strict";
 const { spawnSync } = require("node:child_process");
 
-const pkg = \`${NAME}-\${process.platform}-\${process.arch}\`;
+const pkg = \`${SCOPE}-\${process.platform}-\${process.arch}\`;
 const exe = process.platform === "win32" ? "vera.exe" : "vera";
 let bin;
 try {
