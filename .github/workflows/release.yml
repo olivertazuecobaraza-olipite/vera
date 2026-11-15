@@ -1,10 +1,16 @@
 # Publica una versión al fusionar develop en main: calcula la versión, crea la etiqueta,
 # compila con GoReleaser y firma la procedencia de los binarios (atestaciones de GitHub).
+#
+# Si la publicación falla a medias (p. ej. un token caducado), se puede repetir sin sacar
+# otra versión: Actions → Release → Run workflow (rama main). Vuelve a publicar la etiqueta
+# del último commit de main: reemplaza los archivos de la release, reintenta los gestores de
+# paquetes y salta lo que ya esté publicado en npm.
 name: Release
 
 on:
   push:
     branches: [main]
+  workflow_dispatch: # repetir la publicación de la versión actual (ver arriba)
 
 permissions: {}
 
@@ -36,6 +42,10 @@ jobs:
         id: version
         run: |
           if tag=$(git describe --tags --exact-match --match 'v*' HEAD 2>/dev/null); then
+            if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+              echo "Se repite la publicación de $tag"
+              { echo "tag=$tag"; echo "skip=false"; echo "existing=true"; } >> "$GITHUB_OUTPUT"; exit 0
+            fi
             echo "Este commit ya está publicado como $tag"; echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
           version=$(.github/scripts/next-version.sh)
@@ -44,7 +54,7 @@ jobs:
           echo "skip=false" >> "$GITHUB_OUTPUT"
 
       - name: Crear la etiqueta
-        if: steps.version.outputs.skip == 'false'
+        if: steps.version.outputs.skip == 'false' && steps.version.outputs.existing != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.version.outputs.tag }}
