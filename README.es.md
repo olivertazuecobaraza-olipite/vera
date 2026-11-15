@@ -50,11 +50,11 @@ Elige lo que ya uses. Todos instalan el mismo binario, con atestación de compil
 | Sistema | Recomendado | También |
 |---|---|---|
 | 🍎 **macOS** | `brew install olivertazuecobaraza-olipite/tap/vera` | script · npm/pnpm/yarn/bun · Go |
-| 🐧 **Linux** | script, o el paquete de tu distribución | Homebrew · `.deb` · `.rpm` · `.apk` · AUR · npm · Go |
+| 🐧 **Linux** | script, o el paquete de tu distribución | Homebrew · `.deb` · `.rpm` · `.apk` · npm · Go |
 | 🪟 **Windows** | `winget install Olipite.Vera` | script de PowerShell · Scoop · npm/pnpm/yarn/bun · Go |
 
 > [!NOTE]
-> Los gestores de paquetes (Homebrew, winget, Scoop, AUR, `.deb`/`.rpm`/`.apk`) están disponibles **a partir de la v1.1.0**. npm y los scripts ya funcionan.
+> Los gestores de paquetes (Homebrew, winget, Scoop, `.deb`/`.rpm`/`.apk`) están disponibles **a partir de la v1.1.0**. npm y los scripts ya funcionan.
 
 <details>
 <summary><b>🍺 Homebrew</b> (macOS · Linux)</summary>
@@ -162,14 +162,6 @@ sudo apk add --allow-untrusted ./vera_*_x86_64.apk
 </details>
 
 <details>
-<summary><b>🏹 Arch Linux</b> (AUR)</summary>
-
-```sh
-yay -S vera-bin      # o: paru -S vera-bin
-```
-</details>
-
-<details>
 <summary><b>🐹 Go</b></summary>
 
 ```sh
@@ -213,7 +205,6 @@ git clone https://github.com/olivertazuecobaraza-olipite/vera && cd vera
 | `.deb` | instalar el `.deb` nuevo | `sudo apt remove vera` |
 | `.rpm` | instalar el `.rpm` nuevo | `sudo dnf remove vera` |
 | `.apk` | instalar el `.apk` nuevo | `sudo apk del vera` |
-| AUR | `yay -Syu` | `sudo pacman -R vera-bin` |
 | Go | volver a ejecutar `go install` | `rm "$(go env GOPATH)/bin/vera"` |
 
 ### 🔐 Verifica lo que descargas

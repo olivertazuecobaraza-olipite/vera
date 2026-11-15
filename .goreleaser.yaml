@@ -198,9 +198,11 @@ winget:
           name: winget-pkgs
           branch: master
 
-# npm/pnpm/yarn/bun: los publica .github/scripts/npm-publish.sh (npms de GoReleaser es solo de Pro).
+# npm/pnpm/yarn/bun: los publica .github/scripts/npm-packages.mjs desde release.yml (npms de GoReleaser es solo de Pro).
 
 # yay -S vera-bin
+# EN PAUSA: el registro de cuentas de AUR está cerrado. Se genera el PKGBUILD (y el CI lo
+# valida) pero no se sube. Cuando haya cuenta con la clave de AUR_KEY: skip_upload: auto.
 aurs:
   - name: vera-bin
     ids: [vera]
@@ -214,7 +216,7 @@ aurs:
       email: vera-release-bot@users.noreply.github.com
     private_key: "{{ .Env.AUR_KEY }}"
     git_url: "ssh://aur@aur.archlinux.org/vera-bin.git"
-    skip_upload: auto
+    skip_upload: true
     provides: [vera]
     conflicts: [vera]
     package: |-

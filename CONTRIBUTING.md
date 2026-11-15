@@ -63,7 +63,7 @@ Cada release también publica vera en los gestores de paquetes:
 | Homebrew | `olivertazuecobaraza-olipite/homebrew-tap` (`Casks/vera.rb`) | GoReleaser (`homebrew_casks`) |
 | Scoop | `olivertazuecobaraza-olipite/scoop-bucket` (`vera.json`) | GoReleaser (`scoops`) |
 | winget | PR a `microsoft/winget-pkgs` desde el fork propio (la revisa Microsoft) | GoReleaser (`winget`) |
-| AUR | `vera-bin` | GoReleaser (`aurs`) |
+| AUR (en pausa) | `vera-bin` | GoReleaser (`aurs`) genera el PKGBUILD pero no lo sube (`skip_upload: true`) hasta que haya cuenta de AUR |
 | npm | `vera-ia` + `@olipite/vera-<so>-<arq>` | `.github/scripts/npm-packages.mjs` en `release.yml` |
 
 Los secretos están en el environment `release` (que solo puede usar `main`):

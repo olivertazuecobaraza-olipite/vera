@@ -52,7 +52,7 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$TAG" -f sha="$GITHUB_SHA" > /dev/null
           git tag "$TAG" "$GITHUB_SHA"
 
-      # Release de GitHub + paquetes deb/rpm/apk + Homebrew, Scoop, winget y AUR (ver .goreleaser.yaml).
+      # Release de GitHub + paquetes deb/rpm/apk + Homebrew, Scoop y winget (AUR en pausa; ver .goreleaser.yaml).
       - name: Publicar con GoReleaser
         if: steps.version.outputs.skip == 'false'
         uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
