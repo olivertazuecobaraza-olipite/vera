@@ -70,8 +70,9 @@ Los secretos están en el environment `release` (que solo puede usar `main`):
 
 - `PACKAGES_TOKEN`: token *fine-grained* con permiso de escritura en Contents y Pull requests, limitado a `homebrew-tap`, `scoop-bucket` y el fork de `winget-pkgs`.
 - `WINGET_TOKEN`: token clásico con el scope `public_repo`, solo para abrir la PR en `microsoft/winget-pkgs` (los tokens fine-grained no pueden contribuir a repos públicos ajenos).
-- `NPM_TOKEN`: token granular de npm con permiso de publicación sobre los paquetes `vera-ia*`.
 - `AUR_KEY`: clave SSH privada (sin contraseña) cuya parte pública está en la cuenta de AUR.
+
+npm no usa ningún secreto: cada paquete `vera-ia*` tiene configurado *trusted publishing* en npmjs.com (repositorio `olivertazuecobaraza-olipite/vera`, workflow `release.yml`, environment `release`), así que solo ese workflow puede publicarlos. Un paquete nuevo hay que publicarlo la primera vez a mano y configurarle lo mismo.
 
 Las versiones previas (`vX.Y.Z-rc1`) solo se publican en GitHub, no en los gestores. En cada PR, el CI genera todos los paquetes sin publicarlos y prueba a instalar el `.deb` y el de npm.
 
